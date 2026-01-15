@@ -26,16 +26,31 @@ async function run() {
     const BookNestDB = client.db("BookNestDB");
     const booksCollection = BookNestDB.collection("allbooks");
 
+    // all books get api 
     app.get("/allbooks", async (req, res) => {
       const cursor = booksCollection.find({});
       const allBooks = await cursor.toArray();
       res.send(allBooks);
     });
+
+    // bookdetails get api 
     app.get("/bookdetails/:id", async (req, res) => {
-        const id = req.params.id;
+      const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const bookDetails = await booksCollection.findOne(query);
       res.send(bookDetails);
+    });
+
+    // addbooks post api 
+    app.post("/addbooks", async (req, res) => {
+      const NewBook = req.body;
+      const newissue = {
+        ...NewBook,
+        createdAt: new Date(),
+      };
+
+      const addBooks = await booksCollection.insertOne(newissue);
+      res.send(addBooks);
     });
 
     // Send a ping to confirm a successful connection
