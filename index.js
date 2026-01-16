@@ -26,6 +26,13 @@ async function run() {
     const BookNestDB = client.db("BookNestDB");
     const booksCollection = BookNestDB.collection("allbooks");
 
+    // latest books get api 
+    app.get("/latestbooks", async (req, res) => {
+      const cursor = booksCollection.find({}).limit(8).sort({createdAt:-1}).project({description:0,format:0,pages:0,publisher:0,publishedYear:0,ISBN:0});
+      const latestBooks = await cursor.toArray();
+      res.send(latestBooks);
+    });
+
     // all books get api 
     app.get("/allbooks", async (req, res) => {
       const cursor = booksCollection.find({});
